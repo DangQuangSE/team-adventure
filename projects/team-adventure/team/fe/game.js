@@ -74,37 +74,8 @@ const PRIVATE_ZONES = [
 // ==========================================
 // We draw pixel art assets dynamically using canvas so there are zero asset load failures.
 function generateProceduralTextures(scene) {
-  // A. Create Map Tiles
-  // Floor (Wood texture)
-  let floorCanvas = scene.textures.createCanvas('tile-floor', 32, 32);
-  let ctx = floorCanvas.context;
-  ctx.fillStyle = '#1e1b4b'; // dark wood background
-  ctx.fillRect(0, 0, 32, 32);
-  ctx.fillStyle = '#312e81'; // wood grain lines
-  ctx.fillRect(0, 0, 30, 30);
-  ctx.fillStyle = '#4338ca'; // grain detail
-  ctx.fillRect(4, 8, 22, 4);
-  ctx.fillRect(8, 20, 18, 4);
-  floorCanvas.refresh();
+  // A. Create Map Tiles (Floor and carpets are loaded as images in preload)
 
-  // Carpet (Meeting room texture)
-  let carpet1Canvas = scene.textures.createCanvas('tile-carpet-1', 32, 32);
-  ctx = carpet1Canvas.context;
-  ctx.fillStyle = '#0f172a'; // dark slate
-  ctx.fillRect(0, 0, 32, 32);
-  ctx.fillStyle = '#1e293b'; // checks pattern
-  ctx.fillRect(0, 0, 16, 16);
-  ctx.fillRect(16, 16, 16, 16);
-  carpet1Canvas.refresh();
-
-  let carpet2Canvas = scene.textures.createCanvas('tile-carpet-2', 32, 32);
-  ctx = carpet2Canvas.context;
-  ctx.fillStyle = '#311042'; // deep burgundy
-  ctx.fillRect(0, 0, 32, 32);
-  ctx.fillStyle = '#4a1268';
-  ctx.fillRect(0, 0, 16, 16);
-  ctx.fillRect(16, 16, 16, 16);
-  carpet2Canvas.refresh();
 
   // Wall Tile (Concrete)
   let wallCanvas = scene.textures.createCanvas('tile-wall', 32, 32);
@@ -272,7 +243,12 @@ class OfficeScene extends Phaser.Scene {
   }
 
   preload() {
-    // Generate all game textures procedurally
+    // Load image assets
+    this.load.image('tile-floor', 'assets/floor_wood.png');
+    this.load.image('tile-carpet-1', 'assets/carpet_neon.png');
+    this.load.image('tile-carpet-2', 'assets/carpet_purple.png');
+
+    // Generate all other game textures procedurally
     generateProceduralTextures(this);
   }
 
@@ -281,22 +257,14 @@ class OfficeScene extends Phaser.Scene {
     this.physics.world.setBounds(0, 0, 1024, 800);
     this.cameras.main.setBounds(0, 0, 1024, 800);
 
-    // B. Draw Floor Tiles (Wood floor globally)
-    for (let tx = 0; tx < 1024; tx += 32) {
-      for (let ty = 0; ty < 800; ty += 32) {
-        this.add.image(tx + 16, ty + 16, 'tile-floor');
-      }
-    }
+    // B. Draw Floor Tiles (Efficient tileSprite for high-res wood texture)
+    this.add.tileSprite(512, 400, 1024, 800, 'tile-floor');
 
     // C. Render Private Meeting Rooms & carpets
     PRIVATE_ZONES.forEach(zone => {
-      // Draw dark carpet inside meeting zone
+      // Draw tileable carpet inside meeting zone
       const carpetTile = zone.id === 'meeting_room_1' ? 'tile-carpet-1' : 'tile-carpet-2';
-      for (let zx = zone.x; zx < zone.x + zone.width; zx += 32) {
-        for (let zy = zone.y; zy < zone.y + zone.height; zy += 32) {
-          this.add.image(zx + 16, zy + 16, carpetTile);
-        }
-      }
+      this.add.tileSprite(zone.x + zone.width / 2, zone.y + zone.height / 2, zone.width, zone.height, carpetTile);
 
       // Draw glass neon wall borders
       const graphics = this.add.graphics();

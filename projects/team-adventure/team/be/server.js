@@ -7,7 +7,7 @@ const SocketController = require('./src/adapters/SocketController');
 
 // Load environment variables
 const PORT = process.env.PORT || 3000;
-const PUBLIC_DIR = path.join(__dirname, '..', '..', '..', 'public');
+const PUBLIC_DIR = path.join(__dirname, '..', 'fe');
 
 // 1. Initialize repository
 const playerRepository = new PlayerRepository();
