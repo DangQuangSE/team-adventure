@@ -116,3 +116,10 @@ dist
 Thumbs.db
 
 .claude/
+
+# Java / Maven
+target/
+*.class
+
+# Local runtime
+.env.*

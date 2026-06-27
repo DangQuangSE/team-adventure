@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Team Adventure Office</title>
+    <link rel="stylesheet" href="./src/styles/app.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/phaser/3.80.1/phaser.min.js"></script>
+  </head>
+  <body>
+    <main id="app">
+      <section id="join-screen" class="join-screen">
+        <form id="join-form" class="join-panel">
+          <p class="eyebrow">Team Adventure</p>
+          <h1>Virtual Office</h1>
+          <p class="intro">Walk into rooms, meet teammates, and make remote work feel present.</p>
+
+          <label class="field">
+            <span>Display name</span>
+            <input id="display-name" name="displayName" maxlength="32" placeholder="Your name" autocomplete="name" />
+          </label>
+
+          <div class="avatar-picker" aria-label="Avatar style">
+            <button type="button" class="avatar-option active" data-avatar="dev-blue">Dev</button>
+            <button type="button" class="avatar-option" data-avatar="design-purple">Design</button>
+            <button type="button" class="avatar-option" data-avatar="manager-orange">Manager</button>
+            <button type="button" class="avatar-option" data-avatar="qa-green">QA</button>
+          </div>
+
+          <button class="primary-action" type="submit">Enter Office</button>
+        </form>
+      </section>
+
+      <section id="office-screen" class="office-screen hidden">
+        <header class="topbar">
+          <div>
+            <strong>Team Adventure</strong>
+            <span id="connection-state">Disconnected</span>
+          </div>
+          <nav class="topbar-actions">
+            <button id="focus-button" type="button">Focus</button>
+            <button id="meeting-button" type="button">Meeting</button>
+            <button id="away-button" type="button">Away</button>
+          </nav>
+        </header>
+
+        <div class="workspace">
+          <div class="game-shell">
+            <div id="game-root"></div>
+            <div id="interaction-tip" class="interaction-tip hidden">Press E</div>
+            <div id="room-chip" class="room-chip hidden"></div>
+          </div>
+
+          <aside class="side-panel">
+            <section>
+              <h2>People</h2>
+              <div id="people-list" class="people-list"></div>
+            </section>
+
+            <section>
+              <h2>Controls</h2>
+              <div class="control-row">
+                <button id="mute-button" type="button">Mic On</button>
+                <button id="camera-button" type="button">Cam On</button>
+              </div>
+            </section>
+
+            <section class="note-section">
+              <h2>Shared Note</h2>
+              <textarea id="shared-note" spellcheck="false"></textarea>
+            </section>
+          </aside>
+        </div>
+      </section>
+    </main>
+
+    <script type="module" src="./src/main.js"></script>
+  </body>
+</html>
