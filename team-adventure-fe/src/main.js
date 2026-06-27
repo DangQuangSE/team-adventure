@@ -4,10 +4,12 @@ import { OfficeSocket } from './realtime/officeSocket.js';
 import { ProximityVoice } from './realtime/proximityVoice.js';
 import { OfficeStore } from './state/officeStore.js';
 import { OfficeUi } from './ui/officeUi.js';
+import { ExcalidrawBoardHost } from './whiteboard/excalidrawBoard.jsx';
 
 const store = new OfficeStore();
 const socket = new OfficeSocket(RUNTIME.wsUrl);
 const ui = new OfficeUi(store, socket);
+const boardHost = new ExcalidrawBoardHost(socket);
 
 let game = null;
 let localProfile = null;
@@ -38,6 +40,8 @@ ui.bind({
   onToggleMic: () => voice.toggleMuted()
 });
 
+boardHost.mount(document.getElementById('excalidraw-board-root'));
+ui.setBoardHost(boardHost);
 socket.connect();
 
 function bootGame() {

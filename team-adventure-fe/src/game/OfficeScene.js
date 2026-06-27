@@ -44,7 +44,6 @@ export class OfficeScene extends Phaser.Scene {
     this.player.setCollideWorldBounds(true);
     this.configureAvatarSprite(this.player);
     this.createBlinkOverlay(this.player, 'local');
-    this.physics.add.collider(this.player, this.obstacles);
     this.cameras.main.startFollow(this.player, true, 0.08, 0.08);
 
     this.nameTag = this.add.text(this.player.x, this.player.y - NAME_TAG_OFFSET, this.localProfile.name, {

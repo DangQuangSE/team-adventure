@@ -323,16 +323,20 @@ button.danger {
   font-size: 12px;
 }
 
-#board-note {
+#excalidraw-board-root,
+.excalidraw-board {
   min-height: 0;
   flex: 1;
   width: 100%;
-  resize: none;
-  border: 0;
-  padding: 22px;
-  color: var(--ink);
-  line-height: 1.6;
-  outline: none;
+}
+
+.excalidraw-board {
+  height: 100%;
+}
+
+.excalidraw {
+  --color-primary: var(--primary);
+  --color-primary-darker: var(--primary-strong);
 }
 
 @media (max-width: 960px) {

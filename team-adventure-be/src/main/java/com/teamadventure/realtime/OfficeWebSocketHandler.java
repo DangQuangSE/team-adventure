@@ -49,6 +49,8 @@ public class OfficeWebSocketHandler extends TextWebSocketHandler {
       case "change-media" -> handleMedia(session, clientMessage.payload());
       case "change-zone" -> handleZone(session, clientMessage.payload());
       case "edit-note" -> handleNote(session, clientMessage.payload());
+      case "open-board" -> handleOpenBoard(session, clientMessage.payload());
+      case "update-board" -> handleUpdateBoard(session, clientMessage.payload());
       case "webrtc-offer", "webrtc-answer", "webrtc-ice-candidate", "webrtc-disconnect" ->
           forwardToPeer(session, clientMessage.type(), clientMessage.payload());
       default -> send(session, ServerMessage.of("error", Map.of("message", "Unknown message type")));
@@ -110,6 +112,19 @@ public class OfficeWebSocketHandler extends TextWebSocketHandler {
     broadcastExcept(session.getId(), ServerMessage.of("note-updated", Map.of("text", note)));
   }
 
+  private void handleOpenBoard(WebSocketSession session, JsonNode payload) throws IOException {
+    send(session, ServerMessage.of("board-state", officeService.board(text(payload, "boardId"))));
+  }
+
+  private void handleUpdateBoard(WebSocketSession session, JsonNode payload) {
+    var board = officeService.updateBoard(
+        text(payload, "boardId"),
+        payload == null ? null : payload.path("scene"),
+        longValue(payload, "version", System.currentTimeMillis())
+    );
+    broadcastExcept(session.getId(), ServerMessage.of("board-updated", board));
+  }
+
   private void forwardToPeer(WebSocketSession session, String type, JsonNode payload) throws IOException {
     String targetId = text(payload, "targetId");
     WebSocketSession target = sessions.get(targetId);
@@ -163,5 +178,10 @@ public class OfficeWebSocketHandler extends TextWebSocketHandler {
   private static boolean boolValue(JsonNode node, String field) {
     JsonNode value = node == null ? null : node.get(field);
     return value != null && value.asBoolean(false);
+  }
+
+  private static long longValue(JsonNode node, String field, long fallback) {
+    JsonNode value = node == null ? null : node.get(field);
+    return value == null || !value.canConvertToLong() ? fallback : value.asLong();
   }
 }

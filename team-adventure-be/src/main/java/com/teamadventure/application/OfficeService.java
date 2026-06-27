@@ -5,10 +5,15 @@ import com.teamadventure.domain.model.Player;
 import com.teamadventure.domain.model.PlayerStatus;
 import com.teamadventure.domain.model.Position;
 import com.teamadventure.domain.repository.PlayerRepository;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.util.Collection;
+import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicReference;
+import com.teamadventure.realtime.dto.BoardView;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -24,10 +29,13 @@ public class OfficeService {
       """;
 
   private final PlayerRepository playerRepository;
+  private final ObjectMapper objectMapper;
   private final AtomicReference<String> sharedNote = new AtomicReference<>(DEFAULT_NOTE);
+  private final Map<String, BoardState> boards = new ConcurrentHashMap<>();
 
-  public OfficeService(PlayerRepository playerRepository) {
+  public OfficeService(PlayerRepository playerRepository, ObjectMapper objectMapper) {
     this.playerRepository = playerRepository;
+    this.objectMapper = objectMapper;
   }
 
   public Player join(String sessionId, String name, String avatarStyle) {
@@ -79,11 +87,33 @@ public class OfficeService {
     return sharedNote.get();
   }
 
+  public BoardView board(String boardId) {
+    BoardState state = boards.computeIfAbsent(normalizeBoardId(boardId), ignored -> BoardState.empty(objectMapper));
+    return new BoardView(normalizeBoardId(boardId), state.scene(), state.version());
+  }
+
+  public BoardView updateBoard(String boardId, JsonNode scene, long version) {
+    String normalizedBoardId = normalizeBoardId(boardId);
+    BoardState nextState = new BoardState(scene == null || scene.isNull() ? objectMapper.createObjectNode() : scene, version);
+    boards.put(normalizedBoardId, nextState);
+    return new BoardView(normalizedBoardId, nextState.scene(), nextState.version());
+  }
+
   public Collection<Player> players() {
     return playerRepository.findAll();
   }
 
   public Optional<Player> disconnect(String id) {
     return playerRepository.remove(id);
+  }
+
+  private static String normalizeBoardId(String boardId) {
+    return (boardId == null || boardId.isBlank()) ? "default-board" : boardId.trim();
+  }
+
+  private record BoardState(JsonNode scene, long version) {
+    static BoardState empty(ObjectMapper objectMapper) {
+      return new BoardState(objectMapper.createObjectNode(), 0);
+    }
   }
 }

@@ -23,14 +23,14 @@ team-adventure
 |-- team-adventure-be
 |   `-- Spring Boot realtime backend
 |-- team-adventure-fe
-|   `-- JavaScript and Phaser frontend
+|   `-- Vite, JavaScript, React Excalidraw, and Phaser frontend
 `-- README.md
 ```
 
 The old Node.js and Socket.io MVP was replaced with this cleaner two-side structure:
 
 - `team-adventure-be`: Spring Boot backend for realtime state, WebSocket messaging, note sync, and WebRTC signaling.
-- `team-adventure-fe`: Browser frontend using JavaScript modules and Phaser for the 2D office experience.
+- `team-adventure-fe`: Browser frontend using Vite, JavaScript modules, React for Excalidraw, and Phaser for the 2D office experience.
 
 ## Current Features
 
@@ -70,16 +70,15 @@ Current zone behavior:
 - Private rooms allow voice between players in the same room.
 - Zone changes are sent to the backend and broadcast to other clients.
 
-### Shared Note And Board
+### Shared Note And Excalidraw Boards
 
-The project includes a realtime shared note system.
+The project includes a lightweight realtime shared note plus self-hosted Excalidraw boards.
 
-Users can edit notes in two ways:
+Users can edit the shared note from the sidebar `Shared Note` panel.
 
-- From the sidebar `Shared Note` panel.
-- By walking near a board object, such as `Whiteboard` or `Project Board`, and pressing `E`.
+Users can open a visual board by walking near a board object, such as `Whiteboard`, `Project Board`, or `Event Screen`, and pressing `E`.
 
-The board opens a larger synced note modal. Edits are debounced and broadcast to other clients through the Spring Boot WebSocket backend.
+The board opens an embedded Excalidraw canvas rendered from the npm package `@excalidraw/excalidraw`. Each board is keyed by `boardId`, so different room/project objects can have independent canvas state. Board scenes are sent to the Spring Boot backend, stored in memory, and broadcast to other connected users.
 
 ### Proximity Voice
 
@@ -133,6 +132,8 @@ Supported client message types:
 - `change-media`
 - `change-zone`
 - `edit-note`
+- `open-board`
+- `update-board`
 - `webrtc-offer`
 - `webrtc-answer`
 - `webrtc-ice-candidate`
@@ -153,6 +154,7 @@ Main layers:
 - `realtime`: WebSocket client and proximity voice manager.
 - `state`: client-side office store.
 - `ui`: DOM bindings for join screen, people list, controls, shared note, board modal, room chip, and voice state.
+- `whiteboard`: self-hosted Excalidraw React integration.
 - `styles`: application CSS.
 
 Important frontend files:
@@ -162,6 +164,7 @@ Important frontend files:
 - `src/realtime/officeSocket.js`: WebSocket wrapper.
 - `src/realtime/proximityVoice.js`: WebRTC proximity voice.
 - `src/ui/officeUi.js`: UI controls and note board modal.
+- `src/whiteboard/excalidrawBoard.jsx`: Excalidraw board host, snapshot hydration, and realtime sync.
 - `src/config/officeMap.js`: room, object, desk, and world definitions.
 
 ## Run Locally
@@ -234,8 +237,8 @@ Then reload the page.
 6. Allow microphone permission in the browser.
 7. Walk away and confirm the nearby voice connection count returns to zero.
 8. Walk near `Whiteboard` or `Project Board`.
-9. Press `E` to open the board note.
-10. Edit text in one tab and confirm it appears in the other tab.
+9. Press `E` to open the Excalidraw board.
+10. Draw in one tab and confirm the board updates in the other tab.
 
 ## Verification
 
@@ -253,13 +256,21 @@ cd team-adventure-fe
 npm.cmd run check
 ```
 
+Frontend production build:
+
+```bash
+cd team-adventure-fe
+npm.cmd run build
+```
+
 ## Current Limitations
 
-- Data is stored in memory and resets when the backend restarts.
+- Player data, shared notes, and Excalidraw board snapshots are stored in memory and reset when the backend restarts.
 - There is no authentication or user account system yet.
 - The office map is defined in JavaScript, not yet loaded from a tilemap editor.
 - Visual assets are generated procedurally for now and should be replaced with proper office assets.
 - WebRTC is peer-to-peer mesh, which is not ideal for large meetings.
+- Excalidraw board sync currently sends scene snapshots; richer conflict handling and persistence should be added before serious production use.
 - There is no text chat, file sharing, calendar integration, or task system yet.
 
 ## Roadmap
@@ -268,7 +279,7 @@ Near-term:
 
 - Replace generated textures with real assets.
 - Add a tilemap workflow, likely using Tiled JSON.
-- Add persistent users, offices, rooms, desks, and notes.
+- Add persistent users, offices, rooms, desks, notes, and Excalidraw board snapshots.
 - Add proper error handling and reconnect behavior for WebSocket.
 - Add better voice indicators, speaking state, and device selection.
 

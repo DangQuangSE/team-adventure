@@ -16,6 +16,11 @@ export class OfficeUi {
       muteButton: document.getElementById('mute-button'),
       cameraButton: document.getElementById('camera-button')
     };
+    this.boardHost = null;
+  }
+
+  setBoardHost(boardHost) {
+    this.boardHost = boardHost;
   }
 
   bind({ onJoin, onToggleMic }) {
@@ -47,18 +52,10 @@ export class OfficeUi {
     });
 
     document.getElementById('board-close').addEventListener('click', () => this.closeBoard());
-    document.getElementById('board-note').addEventListener('input', event => {
-      this.elements.sharedNote.value = event.target.value;
-      this.syncNote(event.target.value);
-    });
-
     this.store.addEventListener('change', () => this.renderPeople());
     this.store.addEventListener('note-change', event => {
       if (document.activeElement !== this.elements.sharedNote) {
         this.elements.sharedNote.value = event.detail;
-      }
-      if (document.activeElement !== document.getElementById('board-note')) {
-        document.getElementById('board-note').value = event.detail;
       }
     });
   }
@@ -67,7 +64,6 @@ export class OfficeUi {
     this.elements.joinScreen.classList.add('hidden');
     this.elements.officeScreen.classList.remove('hidden');
     this.elements.sharedNote.value = note || '';
-    document.getElementById('board-note').value = note || '';
   }
 
   setConnectionState(state) {
@@ -92,9 +88,9 @@ export class OfficeUi {
 
   openBoard(object) {
     document.getElementById('board-title').textContent = object.name;
-    document.getElementById('board-note').value = this.elements.sharedNote.value;
+    document.getElementById('board-subtitle').textContent = `Self-hosted Excalidraw board: ${object.id}`;
     document.getElementById('board-modal').classList.remove('hidden');
-    document.getElementById('board-note').focus();
+    this.boardHost?.open(object.id);
   }
 
   closeBoard() {

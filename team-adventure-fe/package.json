@@ -4,7 +4,15 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "node scripts/dev-server.js",
-    "check": "node --check scripts/dev-server.js"
+    "dev": "vite --host 0.0.0.0",
+    "build": "vite build",
+    "preview": "vite preview --host 0.0.0.0",
+    "check": "node --check scripts/dev-server.js && node --check src/main.js && node --check src/game/OfficeScene.js && node --check src/realtime/officeSocket.js && node --check src/realtime/proximityVoice.js && node --check src/state/officeStore.js && node --check src/ui/officeUi.js"
+  },
+  "dependencies": {
+    "@excalidraw/excalidraw": "^0.18.1",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "vite": "^8.1.0"
   }
 }
