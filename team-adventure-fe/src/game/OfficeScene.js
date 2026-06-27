@@ -11,6 +11,7 @@ export class OfficeScene extends Phaser.Scene {
     this.remoteSprites = new Map();
     this.lastMovementAt = 0;
     this.currentZoneId = null;
+    this.nearbyObject = null;
   }
 
   preload() {
@@ -28,7 +29,12 @@ export class OfficeScene extends Phaser.Scene {
     this.obstacles = this.physics.add.staticGroup();
     DESKS.forEach(desk => this.obstacles.create(desk.x, desk.y, 'desk'));
 
-    this.player = this.physics.add.sprite(WORLD.spawn.x, WORLD.spawn.y, this.localProfile.avatarStyle);
+    const self = this.store.self();
+    this.player = this.physics.add.sprite(
+      self?.x || WORLD.spawn.x,
+      self?.y || WORLD.spawn.y,
+      this.localProfile.avatarStyle
+    );
     this.player.setCollideWorldBounds(true);
     this.player.setSize(20, 16).setOffset(6, 16);
     this.physics.add.collider(this.player, this.obstacles);
@@ -143,8 +149,19 @@ export class OfficeScene extends Phaser.Scene {
 
     this.ui.setInteraction(nearby);
     if (nearby && Phaser.Input.Keyboard.JustDown(this.keys.E)) {
-      this.ui.showToast(`${nearby.name} is ready for product integration.`);
+      this.ui.openBoard(nearby);
     }
+  }
+
+  getLocalPresence() {
+    if (!this.player) {
+      return null;
+    }
+    return {
+      x: Math.round(this.player.x),
+      y: Math.round(this.player.y),
+      zoneId: this.currentZoneId
+    };
   }
 
   syncRemotePlayers() {

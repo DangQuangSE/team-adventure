@@ -18,7 +18,7 @@ export class OfficeUi {
     };
   }
 
-  bind({ onJoin }) {
+  bind({ onJoin, onToggleMic }) {
     document.querySelectorAll('.avatar-option').forEach(button => {
       button.addEventListener('click', () => {
         document.querySelectorAll('.avatar-option').forEach(item => item.classList.remove('active'));
@@ -39,20 +39,26 @@ export class OfficeUi {
     document.getElementById('meeting-button').addEventListener('click', () => this.changeStatus('meeting'));
     document.getElementById('away-button').addEventListener('click', () => this.changeStatus('away'));
 
-    this.elements.muteButton.addEventListener('click', () => this.toggleMedia('muted'));
+    this.elements.muteButton.addEventListener('click', () => onToggleMic());
     this.elements.cameraButton.addEventListener('click', () => this.toggleMedia('cameraOff'));
 
     this.elements.sharedNote.addEventListener('input', () => {
-      clearTimeout(this.noteDebounce);
-      this.noteDebounce = setTimeout(() => {
-        this.socket.send('edit-note', { text: this.elements.sharedNote.value });
-      }, 350);
+      this.syncNote(this.elements.sharedNote.value);
+    });
+
+    document.getElementById('board-close').addEventListener('click', () => this.closeBoard());
+    document.getElementById('board-note').addEventListener('input', event => {
+      this.elements.sharedNote.value = event.target.value;
+      this.syncNote(event.target.value);
     });
 
     this.store.addEventListener('change', () => this.renderPeople());
     this.store.addEventListener('note-change', event => {
       if (document.activeElement !== this.elements.sharedNote) {
         this.elements.sharedNote.value = event.detail;
+      }
+      if (document.activeElement !== document.getElementById('board-note')) {
+        document.getElementById('board-note').value = event.detail;
       }
     });
   }
@@ -61,6 +67,7 @@ export class OfficeUi {
     this.elements.joinScreen.classList.add('hidden');
     this.elements.officeScreen.classList.remove('hidden');
     this.elements.sharedNote.value = note || '';
+    document.getElementById('board-note').value = note || '';
   }
 
   setConnectionState(state) {
@@ -81,6 +88,36 @@ export class OfficeUi {
   showToast(message) {
     this.elements.interactionTip.textContent = message;
     this.elements.interactionTip.classList.remove('hidden');
+  }
+
+  openBoard(object) {
+    document.getElementById('board-title').textContent = object.name;
+    document.getElementById('board-note').value = this.elements.sharedNote.value;
+    document.getElementById('board-modal').classList.remove('hidden');
+    document.getElementById('board-note').focus();
+  }
+
+  closeBoard() {
+    document.getElementById('board-modal').classList.add('hidden');
+  }
+
+  syncNote(text) {
+    clearTimeout(this.noteDebounce);
+    this.noteDebounce = setTimeout(() => {
+      this.socket.send('edit-note', { text });
+    }, 350);
+  }
+
+  setMicState(muted) {
+    this.elements.muteButton.textContent = muted ? 'Mic Off' : 'Mic On';
+    this.elements.muteButton.classList.toggle('danger', muted);
+  }
+
+  setVoiceState(activeCount) {
+    const label = document.getElementById('voice-state');
+    label.textContent = activeCount > 0
+      ? `${activeCount} nearby voice connection${activeCount > 1 ? 's' : ''}`
+      : 'No nearby voice';
   }
 
   changeStatus(status) {

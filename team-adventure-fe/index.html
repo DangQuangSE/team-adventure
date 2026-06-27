@@ -60,9 +60,10 @@
             <section>
               <h2>Controls</h2>
               <div class="control-row">
-                <button id="mute-button" type="button">Mic On</button>
+                <button id="mute-button" class="danger" type="button">Mic Off</button>
                 <button id="camera-button" type="button">Cam On</button>
               </div>
+              <p id="voice-state" class="voice-state">No nearby voice</p>
             </section>
 
             <section class="note-section">
@@ -72,6 +73,21 @@
           </aside>
         </div>
       </section>
+
+      <section id="board-modal" class="modal-layer hidden" aria-modal="true">
+        <div class="board-panel">
+          <header class="board-header">
+            <div>
+              <strong id="board-title">Whiteboard</strong>
+              <span>Synced team note</span>
+            </div>
+            <button id="board-close" type="button">Close</button>
+          </header>
+          <textarea id="board-note" spellcheck="false"></textarea>
+        </div>
+      </section>
+
+      <div id="remote-audio-root" class="hidden"></div>
     </main>
 
     <script type="module" src="./src/main.js"></script>
