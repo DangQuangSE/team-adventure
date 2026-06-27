@@ -1,47 +1,38 @@
 export const WORLD = {
-  width: 1280,
-  height: 832,
-  spawn: { x: 420, y: 360 }
+  width: 1536,
+  height: 1024,
+  spawn: { x: 1190, y: 765 },
+  background: 'assets/background/background.png'
 };
 
 export const ROOMS = [
   {
-    id: 'lobby',
-    name: 'Lobby',
+    id: 'welcome',
+    name: 'Welcome / Reception',
     type: 'public',
-    x: 320,
-    y: 288,
+    x: 1110,
+    y: 640,
     width: 260,
-    height: 180,
+    height: 190,
     color: 0x4b5563
   },
   {
-    id: 'engineering',
-    name: 'Engineering',
+    id: 'dev-zone',
+    name: 'Dev Zone',
     type: 'department',
-    x: 640,
-    y: 120,
-    width: 420,
-    height: 260,
+    x: 170,
+    y: 230,
+    width: 405,
+    height: 285,
     color: 0x2563eb
-  },
-  {
-    id: 'design-studio',
-    name: 'Design Studio',
-    type: 'department',
-    x: 150,
-    y: 120,
-    width: 300,
-    height: 220,
-    color: 0x9333ea
   },
   {
     id: 'meeting-room',
     name: 'Meeting Room',
     type: 'private',
-    x: 120,
-    y: 520,
-    width: 360,
+    x: 520,
+    y: 105,
+    width: 390,
     height: 220,
     color: 0x0f766e
   },
@@ -49,53 +40,91 @@ export const ROOMS = [
     id: 'focus-room',
     name: 'Focus Room',
     type: 'private',
-    x: 760,
-    y: 520,
-    width: 320,
-    height: 220,
+    x: 910,
+    y: 135,
+    width: 150,
+    height: 210,
     color: 0xb45309
+  },
+  {
+    id: 'call-room',
+    name: 'Call Room',
+    type: 'private',
+    x: 1050,
+    y: 180,
+    width: 180,
+    height: 170,
+    color: 0x7c3aed
+  },
+  {
+    id: 'open-office',
+    name: 'Open Office',
+    type: 'department',
+    x: 560,
+    y: 310,
+    width: 520,
+    height: 260,
+    color: 0x2563eb
+  },
+  {
+    id: 'lounge',
+    name: 'Lounge',
+    type: 'public',
+    x: 330,
+    y: 575,
+    width: 260,
+    height: 220,
+    color: 0x9333ea
+  },
+  {
+    id: 'event-area',
+    name: 'Event Area',
+    type: 'public',
+    x: 910,
+    y: 600,
+    width: 260,
+    height: 160,
+    color: 0xea580c
   }
 ];
 
 export const OBJECTS = [
   {
     id: 'whiteboard',
-    name: 'Whiteboard',
-    x: 285,
-    y: 520,
-    width: 90,
-    height: 36,
+    name: 'Dev Whiteboard',
+    x: 455,
+    y: 270,
+    width: 120,
+    height: 80,
     kind: 'whiteboard'
   },
   {
     id: 'project-board',
     name: 'Project Board',
-    x: 835,
-    y: 120,
-    width: 96,
-    height: 40,
+    x: 1085,
+    y: 540,
+    width: 120,
+    height: 110,
     kind: 'board'
   },
   {
-    id: 'coffee',
-    name: 'Coffee Corner',
-    x: 1140,
-    y: 700,
-    width: 70,
-    height: 60,
+    id: 'event-screen',
+    name: 'Event Screen',
+    x: 1030,
+    y: 640,
+    width: 120,
+    height: 90,
+    kind: 'board'
+  },
+  {
+    id: 'lounge-table',
+    name: 'Lounge Table',
+    x: 485,
+    y: 710,
+    width: 150,
+    height: 90,
     kind: 'lounge'
   }
 ];
 
-export const DESKS = [
-  { x: 660, y: 245 },
-  { x: 790, y: 245 },
-  { x: 920, y: 245 },
-  { x: 660, y: 330 },
-  { x: 790, y: 330 },
-  { x: 920, y: 330 },
-  { x: 210, y: 245 },
-  { x: 330, y: 245 },
-  { x: 890, y: 640 },
-  { x: 990, y: 640 }
-];
+export const DESKS = [];

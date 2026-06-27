@@ -1,9 +1,18 @@
-const avatarPalette = {
-  'dev-blue': ['#2563eb', '#dbeafe', '#1e293b'],
-  'design-purple': ['#9333ea', '#f5d0fe', '#581c87'],
-  'manager-orange': ['#ea580c', '#ffedd5', '#7c2d12'],
-  'qa-green': ['#16a34a', '#dcfce7', '#064e3b']
+export const AVATAR_ASSETS = {
+  'dev-blue': 'assets/avartars/boy1-rmpg.png',
+  'design-purple': 'assets/avartars/girl3-rmbg.png',
+  'manager-orange': 'assets/avartars/boy2-rmbg.png',
+  'qa-green': 'assets/avartars/girl0-rmbg.png'
 };
+
+export function loadAvatarAssets(scene) {
+  Object.entries(AVATAR_ASSETS).forEach(([key, path]) => {
+    scene.load.spritesheet(key, path, {
+      frameWidth: 153,
+      frameHeight: 408
+    });
+  });
+}
 
 export function createTextures(scene) {
   createTile(scene, 'floor', '#d8c8a8', '#c6ad84');
@@ -11,7 +20,6 @@ export function createTextures(scene) {
   createDesk(scene);
   createWhiteboard(scene);
   createCoffee(scene);
-  Object.entries(avatarPalette).forEach(([key, colors]) => createAvatar(scene, key, colors));
 }
 
 function createTile(scene, key, base, accent) {
@@ -62,22 +70,5 @@ function createCoffee(scene) {
   ctx.fillRect(20, 8, 18, 22);
   ctx.fillStyle = '#c2410c';
   ctx.fillRect(24, 12, 10, 14);
-  canvas.refresh();
-}
-
-function createAvatar(scene, key, [shirt, pants, hair]) {
-  const canvas = scene.textures.createCanvas(key, 32, 32);
-  const ctx = canvas.context;
-  ctx.fillStyle = '#ffedd5';
-  ctx.beginPath();
-  ctx.arc(16, 9, 6, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.fillStyle = hair;
-  ctx.fillRect(10, 4, 12, 5);
-  ctx.fillStyle = shirt;
-  ctx.fillRect(10, 15, 12, 10);
-  ctx.fillStyle = pants;
-  ctx.fillRect(10, 25, 5, 7);
-  ctx.fillRect(17, 25, 5, 7);
   canvas.refresh();
 }

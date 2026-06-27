@@ -50,8 +50,8 @@ function bootGame() {
   game = new Phaser.Game({
     type: Phaser.AUTO,
     parent: 'game-root',
-    width: 960,
-    height: 640,
+    width: 1100,
+    height: 720,
     backgroundColor: '#f1f5f9',
     physics: {
       default: 'arcade',
